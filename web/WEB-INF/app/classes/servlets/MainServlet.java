@@ -1,8 +1,7 @@
 package servlets;
 
 
-
-import model.Model;
+import model.DAO;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,29 +9,53 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Map;
+
 
 @WebServlet("/main")
 public class MainServlet extends HttpServlet {
-    static Model model=Model.getInstance();
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+
         resp.setContentType("text/html");
-        req.setAttribute("modelData", model.getModelData());
         RequestDispatcher dispatcher = req.getRequestDispatcher("/main.jsp");
         dispatcher.forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("modelData", model.getModelData());
         String textField = req.getParameter("textField");
-        if (!textField.isEmpty())
-        model.addData(textField);
-        doGet(req,resp);
-    }
+        HttpSession session = req.getSession();
 
+        Map.Entry entry = req.getParameterMap().entrySet().iterator().next();
+        String[] entryValue = (String[]) entry.getValue();
+        if (req.getParameterMap().containsKey("logout")) {
+            session.setAttribute("currentSessionUser",null);
+            resp.sendRedirect("");
+            return;
+        } else if (entryValue[0].equals("Edit")) {
+            session.setAttribute("TextIdToEdit", entry.getKey());
+            resp.sendRedirect("edit.jsp");
+            return;
+        } else if (entryValue[0].equals("Delete")) {
+            new DAO().deleteTextNode((String) entry.getKey());
+        } else if (!textField.isEmpty()) {
+            if (req.getParameterMap().containsKey("submit")) {
+                String username = (String) session.getAttribute("currentSessionUser");
+                new DAO().addTextNode(textField, username);
+            } else if (req.getParameterMap().containsKey("save")) {
+                String textId = (String) session.getAttribute("TextIdToEdit");
+                new DAO().updateTextNode(textField, textId);
+            }
+        }
+        RequestDispatcher dispatcher = req.getRequestDispatcher("/main.jsp");
+        dispatcher.forward(req, resp);
+    }
 
 
 }

@@ -1,5 +1,7 @@
 package servlets;
 
+import model.DAO;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.*;
-import java.util.Properties;
 
 @WebServlet("")
 public class Login extends HttpServlet {
@@ -17,17 +17,22 @@ public class Login extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("authText", "");
+        RequestDispatcher dispatcher = req.getRequestDispatcher("/login.jsp");
+        dispatcher.forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String username = req.getParameter("uname");
         String password = req.getParameter("pwd");
-
-        try {
-            Properties props = new Properties();
-            props.load(getClass().getResourceAsStream("/res/dbConfig.properties"));
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            Connection con = DriverManager.getConnection(props.getProperty("db.string"), props.getProperty("db.login"), props.getProperty("db.password"));
-            ResultSet rs;
-            rs = con.createStatement().executeQuery("select * from users where UserID='" + username + "' and UserPwd='" + password + "'");
-            if (rs.next()) {
+        req.setAttribute("authText", "");
+        if (username.equals(""))
+            req.setAttribute("authText", "Enter username");
+        else if (password.equals(""))
+            req.setAttribute("authText", "Enter password");
+        else if (req.getParameterMap().containsKey("login")) {
+            if (new DAO().authUser(username, password)) {
                 HttpSession session = req.getSession(true);
                 session.setAttribute("currentSessionUser", username);
                 resp.sendRedirect("main.jsp");
@@ -35,10 +40,14 @@ public class Login extends HttpServlet {
             } else {
                 req.setAttribute("authText", "Wrong username or password");
             }
-        } catch (ClassNotFoundException | SQLException e) {
-            req.setAttribute("authText", "Internal error");
+        } else if (req.getParameterMap().containsKey("register")) {
+            boolean hasRegistered=new DAO().createUser(username,password);
+            if (hasRegistered)
+                req.setAttribute("authText", "Successfully registered");
+            else
+                req.setAttribute("authText", "Username is already in use");
         }
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/index.jsp");
+        RequestDispatcher dispatcher = req.getRequestDispatcher("/login.jsp");
         dispatcher.forward(req, resp);
     }
 }
