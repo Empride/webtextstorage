@@ -1,7 +1,7 @@
 package servlets;
 
 
-import model.DAO;
+import model.TextDataDAO;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,8 +20,6 @@ public class MainServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-
         resp.setContentType("text/html");
         RequestDispatcher dispatcher = req.getRequestDispatcher("/main.jsp");
         dispatcher.forward(req, resp);
@@ -43,14 +41,14 @@ public class MainServlet extends HttpServlet {
             resp.sendRedirect("edit.jsp");
             return;
         } else if (entryValue[0].equals("Delete")) {
-            new DAO().deleteTextNode((String) entry.getKey());
+            new TextDataDAO().deleteTextNode((String) entry.getKey());
         } else if (!textField.isEmpty()) {
             if (req.getParameterMap().containsKey("submit")) {
                 String username = (String) session.getAttribute("currentSessionUser");
-                new DAO().addTextNode(textField, username);
+                new TextDataDAO().addTextNode(textField, username);
             } else if (req.getParameterMap().containsKey("save")) {
                 String textId = (String) session.getAttribute("TextIdToEdit");
-                new DAO().updateTextNode(textField, textId);
+                new TextDataDAO().updateTextNode(textField, textId);
             }
         }
         RequestDispatcher dispatcher = req.getRequestDispatcher("/main.jsp");

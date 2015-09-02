@@ -1,6 +1,6 @@
 package servlets;
 
-import model.DAO;
+import model.UserDAO;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -32,7 +32,7 @@ public class Login extends HttpServlet {
         else if (password.equals(""))
             req.setAttribute("authText", "Enter password");
         else if (req.getParameterMap().containsKey("login")) {
-            if (new DAO().authUser(username, password)) {
+            if (new UserDAO().authUser(username, password)) {
                 HttpSession session = req.getSession(true);
                 session.setAttribute("currentSessionUser", username);
                 resp.sendRedirect("main.jsp");
@@ -41,7 +41,7 @@ public class Login extends HttpServlet {
                 req.setAttribute("authText", "Wrong username or password");
             }
         } else if (req.getParameterMap().containsKey("register")) {
-            boolean hasRegistered=new DAO().createUser(username,password);
+            boolean hasRegistered=new UserDAO().createUser(username,password);
             if (hasRegistered)
                 req.setAttribute("authText", "Successfully registered");
             else

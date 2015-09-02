@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/">
+    <Resource name="jdbc/AppDB" auth="Container"
+              type="javax.sql.DataSource"
+              removeAbandoned="true"
+              removeAbandonedTimeout="30"
+              initialSize="5"
+              maxActive="50"
+              maxIdle="30"              
+              username="WebTextApp"
+              password="123"
+              driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+              url="jdbc:sqlserver://127.0.0.1;DatabaseName=WebTextDb"/>
+</Context>

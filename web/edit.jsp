@@ -1,4 +1,4 @@
-<%@ page import="model.DAO" %>
+<%@ page import="model.TextDataDAO" %>
 <%--
   Created by IntelliJ IDEA.
   User: User
@@ -19,7 +19,7 @@
 <FORM name="form1" method="post" action="main">
   <label>
     <textarea name="textField" rows="10" style="width:90%; padding-bottom: 10%"
-              autocomplete="off"><%=new DAO().getTextNode((String) session.getAttribute("TextIdToEdit"))%></textarea>
+              autocomplete="off"><%=new TextDataDAO().getTextNode((String) session.getAttribute("TextIdToEdit"))%></textarea>
   </label>
   <BR/>
   <INPUT type="submit" style="width: 100px; height: 30px" name="save" value="Save"/>

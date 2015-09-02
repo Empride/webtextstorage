@@ -10,54 +10,7 @@ import java.util.TreeMap;
 /**
  * Created by User on 28.08.2015.
  */
-public class DAO {
-
-    public boolean authUser(String username, String password) {
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            connection = DB.open();
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select * from users where Username='" + username + "' and UserPwd='" + password + "'");
-            if (rs.next()) {
-                statement.close();
-                return true;
-            } else {
-                statement.close();
-                return false;
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        } finally {
-            DB.close(connection, statement, rs);
-        }
-        return false;
-    }
-
-    public boolean createUser(String username, String password) {
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            connection = DB.open();
-            statement = connection.createStatement();
-            rs = statement.executeQuery("select * from users where Username='" + username + "';");
-            if (rs.next()) {
-                statement.close();
-                return false;
-            } else {
-                statement.executeUpdate("INSERT INTO users (Username,UserPwd) VALUES ('" + username + "', '" + password + "') ;");
-                statement.close();
-                return true;
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        } finally {
-            DB.close(connection, statement, rs);
-        }
-        return false;
-    }
+public class TextDataDAO {
 
 
     public Map<Integer, String> getTextData(String username) {
@@ -76,7 +29,7 @@ public class DAO {
                 }
             }
             statement.close();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             DB.close(connection, statement, rs);
@@ -99,7 +52,7 @@ public class DAO {
                 }
             }
             statement.close();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             DB.close(connection, statement, rs);
@@ -114,7 +67,7 @@ public class DAO {
             connection = DB.open();
             statement = connection.createStatement();
             statement.executeUpdate("INSERT INTO TextData (Username,Text,DeleteMark) VALUES ('" + username + "', '" + s + "','" + 0 + "'); ");
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             DB.close(connection, statement, null);
@@ -128,7 +81,7 @@ public class DAO {
             connection = DB.open();
             statement = connection.createStatement();
             statement.executeUpdate("UPDATE TextData SET DeleteMark=1 WHERE TextID='" + textId + "';");
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             DB.close(connection, statement, null);
@@ -142,7 +95,7 @@ public class DAO {
             connection = DB.open();
             statement = connection.createStatement();
             statement.executeUpdate("UPDATE TextData SET Text='" + textField + "' WHERE TextID='" + textId + "';");
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             DB.close(connection, statement, null);

@@ -2,7 +2,7 @@
     private Integer id;
 %>
 
-<%@ page import="model.DAO" %>
+<%@ page import="model.TextDataDAO" %>
 <%@ page import="java.util.Map" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -38,7 +38,7 @@
             <%
 
                 String username = (String) session.getAttribute("currentSessionUser");
-                for (Map.Entry<Integer, String> mapEntry : new DAO().getTextData(username).entrySet()) {
+                for (Map.Entry<Integer, String> mapEntry : new TextDataDAO().getTextData(username).entrySet()) {
                     out.println("<tr>");
                     out.println("<td>" + mapEntry.getValue() + "</td>");
                     out.println("<td>");
